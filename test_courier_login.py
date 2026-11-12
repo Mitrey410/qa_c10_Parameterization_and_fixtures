@@ -27,8 +27,6 @@ class TestCourierLogin:
         password_type,
         expected_status,
     ):
-        base_url = os.getenv("BASE_URL") or BASE_URL
-
         logins = {
             "valid": courier["login"],
             "invalid": f"{courier['login']}_wrong",
@@ -46,7 +44,7 @@ class TestCourierLogin:
         }
 
         response = requests.post(
-            f"{base_url}/api/v1/courier/login",
+            f"{BASE_URL}/api/v1/courier/login",
             json=payload,
         )
 
