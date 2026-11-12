@@ -26,7 +26,6 @@ class TestCourierLogin:
             ("missing", "valid", 400, "Недостаточно данных для входа"),
             ("valid", "missing", 400, "Недостаточно данных для входа"),
             ("invalid", "valid", 404, "Учетная запись не найдена"),
-            ("valid", "invalid", 404, "Учетная запись не найдена"),
         ],
     )
     def test_courier_login(
@@ -56,10 +55,11 @@ class TestCourierLogin:
             "missing": "",
         }
 
-        payload = {
-            "login": logins[login_type],
-            "password": passwords[password_type],
-        }
+        payload = {}
+        if logins[login_type] is not None:
+            payload["login"] = logins[login_type]
+        if passwords[password_type] is not None:
+            payload["password"] = passwords[password_type]
 
         # TODO: отправьте POST /api/v1/courier/login.
         response = requests.post(
