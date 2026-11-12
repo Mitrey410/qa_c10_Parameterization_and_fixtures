@@ -12,7 +12,7 @@ BASE_URL = os.getenv("BASE_URL")
 
 @pytest.fixture
 def courier():
-    url = BASE_URL or os.getenv("BASE_URL")
+    base_url = os.getenv("BASE_URL") or BASE_URL
     login = f"courier_{uuid.uuid4().hex[:8]}"
 
     courier_data = {
@@ -22,13 +22,13 @@ def courier():
     }
 
     response = requests.post(
-        f"{url}/api/v1/courier",
+        f"{base_url}/api/v1/courier",
         json=courier_data,
     )
     assert response.status_code == 201
 
     login_response = requests.post(
-        f"{url}/api/v1/courier/login",
+        f"{base_url}/api/v1/courier/login",
         json={
             "login": courier_data["login"],
             "password": courier_data["password"],
@@ -43,4 +43,4 @@ def courier():
         "id": courier_id,
     }
 
-    requests.delete(f"{url}/api/v1/courier/{courier_id}")
+    requests.delete(f"{base_url}/api/v1/courier/{courier_id}")
