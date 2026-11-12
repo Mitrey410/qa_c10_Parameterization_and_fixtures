@@ -1,5 +1,4 @@
 import os
-import uuid
 
 import pytest
 import requests
@@ -10,36 +9,47 @@ load_dotenv()
 BASE_URL = os.getenv("BASE_URL")
 
 
-@pytest.fixture
-def courier():
-    login = f"courier_{uuid.uuid4().hex[:8]}"
+class TestCourierLogin:
 
-    courier_data = {
-        "login": login,
-        "password": "1234",
-        "firstName": "Test",
-    }
-
-    response = requests.post(
-        f"{BASE_URL}/api/v1/courier",
-        json=courier_data,
+    @pytest.mark.parametrize(
+        "login_type, password_type, expected_status",
+        [
+            ("valid", "valid", 200),
+            ("missing", "valid", 400),
+            ("valid", "missing", 400),
+            ("invalid", "valid", 404),
+        ],
     )
-    assert response.status_code == 201
+    def test_courier_login(
+        self,
+        courier,
+        login_type,
+        password_type,
+        expected_status,
+    ):
+        payload = {}
 
-    login_response = requests.post(
-        f"{BASE_URL}/api/v1/courier/login",
-        json={
-            "login": courier_data["login"],
-            "password": courier_data["password"],
-        },
-    )
-    assert login_response.status_code == 200
-    courier_id = login_response.json()["id"]
+        if login_type == "valid":
+            payload["login"] = courier["login"]
+        elif login_type == "invalid":
+            payload["login"] = f"{courier['login']}_wrong"
 
-    yield {
-        "login": courier_data["login"],
-        "password": courier_data["password"],
-        "id": courier_id,
-    }
+        if password_type == "valid":
+            payload["password"] = courier["password"]
+        elif password_type == "invalid":
+            payload["password"] = "wrong_password"
 
-    requests.delete(f"{BASE_URL}/api/v1/courier/{courier_id}")
+        response = requests.post(
+            f"{BASE_URL}/api/v1/courier/login",
+            json=payload,
+        )
+
+        assert response.status_code == expected_status
+
+        response_data = response.json()
+        if expected_status == 200:
+            assert "id" in response_data
+        elif expected_status == 400:
+            assert response_data["message"] == "Недостаточно данных для входа"
+        elif expected_status == 404:
+            assert response_data["message"] == "Учетная запись не найдена"
