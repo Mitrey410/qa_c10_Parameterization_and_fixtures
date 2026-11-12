@@ -27,20 +27,17 @@ class TestCourierLogin:
         password_type,
         expected_status,
     ):
-        logins = {
-            "valid": courier["login"],
-            "invalid": f"{courier['login']}_wrong",
-        }
-        passwords = {
-            "valid": courier["password"],
-            "invalid": "wrong_password",
-        }
-
         payload = {}
-        if login_type in logins:
-            payload["login"] = logins[login_type]
-        if password_type in passwords:
-            payload["password"] = passwords[password_type]
+
+        if login_type == "valid":
+            payload["login"] = courier["login"]
+        elif login_type == "invalid":
+            payload["login"] = f"{courier['login']}_wrong"
+
+        if password_type == "valid":
+            payload["password"] = courier["password"]
+        elif password_type == "invalid":
+            payload["password"] = "wrong_password"
 
         response = requests.post(
             f"{BASE_URL}/api/v1/courier/login",
