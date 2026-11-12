@@ -17,7 +17,7 @@ class TestCourierLogin:
             ("valid", "valid", 200),
             ("missing", "valid", 400),
             ("valid", "missing", 400),
-            ("invalid", "valid", 404),
+            ("invalid", "invalid", 404),
         ],
     )
     def test_courier_login(
