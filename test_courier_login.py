@@ -30,18 +30,17 @@ class TestCourierLogin:
         logins = {
             "valid": courier["login"],
             "invalid": f"{courier['login']}_wrong",
-            "missing": "",
         }
         passwords = {
             "valid": courier["password"],
             "invalid": "wrong_password",
-            "missing": "",
         }
 
-        payload = {
-            "login": logins[login_type],
-            "password": passwords[password_type],
-        }
+        payload = {}
+        if login_type in logins:
+            payload["login"] = logins[login_type]
+        if password_type in passwords:
+            payload["password"] = passwords[password_type]
 
         response = requests.post(
             f"{BASE_URL}/api/v1/courier/login",
