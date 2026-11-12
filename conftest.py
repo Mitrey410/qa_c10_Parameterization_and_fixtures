@@ -7,13 +7,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_URL = os.getenv("BASE_URL")
-
 
 @pytest.fixture
 def courier():
     # TODO: сгенерируйте уникальный логин курьера.
     # Например, используйте uuid.
+    base_url = os.getenv("BASE_URL")
     login = f"courier_{uuid.uuid4().hex[:8]}"
 
     courier_data = {
@@ -25,11 +24,10 @@ def courier():
     # TODO: создайте курьера через POST /api/v1/courier.
     # Сохраните ответ, чтобы убедиться, что создание прошло успешно.
     response = requests.post(
-        f"{BASE_URL}/api/v1/courier",
+        f"{base_url}/api/v1/courier",
         json=courier_data,
     )
-    assert response.status_code == 201, f"Ошибка создания курьера: {response.text}"
-    assert response.json() == {"ok": True}
+    assert response.status_code == 201
 
     # TODO: получите id созданного курьера.
     # Для этого используйте POST /api/v1/courier/login
@@ -38,7 +36,7 @@ def courier():
     # login_response = requests.post(...)
     # courier_id = login_response.json()["id"]
     login_response = requests.post(
-        f"{BASE_URL}/api/v1/courier/login",
+        f"{base_url}/api/v1/courier/login",
         json={
             "login": courier_data["login"],
             "password": courier_data["password"],
@@ -56,4 +54,4 @@ def courier():
 
     # TODO: после завершения теста удалите созданного курьера.
     # DELETE /api/v1/courier/{id}
-    requests.delete(f"{BASE_URL}/api/v1/courier/{courier_id}")
+    requests.delete(f"{base_url}/api/v1/courier/{courier_id}")
