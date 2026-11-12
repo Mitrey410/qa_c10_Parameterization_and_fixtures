@@ -30,12 +30,12 @@ class TestCourierLogin:
         logins = {
             "valid": courier["login"],
             "invalid": f"{courier['login']}_wrong",
-            "missing": None,
+            "missing": "",
         }
         passwords = {
             "valid": courier["password"],
             "invalid": "wrong_password",
-            "missing": None,
+            "missing": "",
         }
 
         payload = {
