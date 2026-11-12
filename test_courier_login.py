@@ -27,6 +27,8 @@ class TestCourierLogin:
         password_type,
         expected_status,
     ):
+        url = BASE_URL or os.getenv("BASE_URL")
+
         logins = {
             "valid": courier["login"],
             "invalid": f"{courier['login']}_wrong",
@@ -38,14 +40,13 @@ class TestCourierLogin:
             "missing": None,
         }
 
-        payload = {}
-        if logins[login_type] is not None:
-            payload["login"] = logins[login_type]
-        if passwords[password_type] is not None:
-            payload["password"] = passwords[password_type]
+        payload = {
+            "login": logins[login_type],
+            "password": passwords[password_type],
+        }
 
         response = requests.post(
-            f"{BASE_URL}/api/v1/courier/login",
+            f"{url}/api/v1/courier/login",
             json=payload,
         )
 
